@@ -45,7 +45,7 @@ jobs:
               if actual.get("server") != expected or actual.get("_meta", {}).get("io.modelcontextprotocol.registry/official", {}).get("status") != "active":
                   raise SystemExit("Registry version differs or is inactive; choose a new version or reconcile it.")
           with open(os.environ["GITHUB_OUTPUT"], "a") as out:
-              out.write("exists=" + str(actual is not None).lower() + "\\n")
+              out.write("exists=" + str(actual is not None).lower() + "\n")
           PY
       - if: steps.existing.outputs.exists == 'false'
         run: ./mcp-publisher login github-oidc
