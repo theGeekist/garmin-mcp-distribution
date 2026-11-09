@@ -25,5 +25,41 @@ jobs:
           echo "09f1fa70ee146b640584274a1a6b2b8a0310b05d4321fa9224e6df6a016d67f4  publisher.tar.gz" | sha256sum -c -
           tar -xzf publisher.tar.gz mcp-publisher
       - run: ./mcp-publisher validate server.json
-      - run: ./mcp-publisher login github-oidc
-      - run: ./mcp-publisher publish server.json
+      - name: Check existing registry version
+        id: existing
+        run: |
+          python3 - <<'PY'
+          import json, os, urllib.error, urllib.parse, urllib.request
+          expected = json.load(open("server.json"))
+          name = urllib.parse.quote(expected["name"], safe="")
+          version = urllib.parse.quote(expected["version"], safe="")
+          url = f"https://registry.modelcontextprotocol.io/v0.1/servers/{name}/versions/{version}"
+          try:
+              with urllib.request.urlopen(url, timeout=15) as response:
+                  actual = json.load(response)
+          except urllib.error.HTTPError as error:
+              if error.code != 404:
+                  raise
+              actual = None
+          if actual is not None:
+              if actual.get("server") != expected or actual.get("_meta", {}).get("io.modelcontextprotocol.registry/official", {}).get("status") != "active":
+                  raise SystemExit("Registry version differs or is inactive; choose a new version or reconcile it.")
+          with open(os.environ["GITHUB_OUTPUT"], "a") as out:
+              out.write("exists=" + str(actual is not None).lower() + "\\n")
+          PY
+      - if: steps.existing.outputs.exists == 'false'
+        run: ./mcp-publisher login github-oidc
+      - if: steps.existing.outputs.exists == 'false'
+        run: ./mcp-publisher publish server.json
+      - name: Verify published version
+        run: |
+          python3 - <<'PY'
+          import json, urllib.parse, urllib.request
+          expected = json.load(open("server.json"))
+          name = urllib.parse.quote(expected["name"], safe="")
+          version = urllib.parse.quote(expected["version"], safe="")
+          with urllib.request.urlopen(f"https://registry.modelcontextprotocol.io/v0.1/servers/{name}/versions/{version}", timeout=15) as response:
+              actual = json.load(response)
+          if actual.get("server") != expected or actual.get("_meta", {}).get("io.modelcontextprotocol.registry/official", {}).get("status") != "active":
+              raise SystemExit("Published registry version differs or is inactive.")
+          PY
