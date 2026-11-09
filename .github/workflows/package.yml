@@ -30,3 +30,24 @@ jobs:
           path: dist/archives/
           if-no-files-found: error
           retention-days: 7
+
+  bootstrap-registry:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/codex/mcp-registry-distribution'
+    needs: package
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Download verified MCP publisher
+        run: |
+          curl --fail --location --silent --show-error -o publisher.tar.gz https://github.com/modelcontextprotocol/registry/releases/download/v1.8.8/mcp-publisher_linux_amd64.tar.gz
+          echo "09f1fa70ee146b640584274a1a6b2b8a0310b05d4321fa9224e6df6a016d67f4  publisher.tar.gz" | sha256sum -c -
+          tar -xzf publisher.tar.gz mcp-publisher
+      - run: ./mcp-publisher validate server.json
+      - run: ./mcp-publisher login github-oidc
+      - run: ./mcp-publisher publish server.json
