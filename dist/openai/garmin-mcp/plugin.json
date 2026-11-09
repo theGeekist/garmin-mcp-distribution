@@ -1,0 +1,87 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "garmin-mcp",
+  "version": "0.3.6",
+  "description": "Review your Garmin activities, running trends, health metrics and saved workouts with your AI assistant. Plan a workout or make a supported change with your confirmation. A connected Garmin account and compatible host are required. Geekist independently operates this integration.",
+  "author": {
+    "name": "Geekist",
+    "url": "https://geekist.co"
+  },
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Garmin MCP by geekist.co",
+        "shortDescription": "Connect Garmin data to AI",
+        "longDescription": "Review your Garmin activities, running trends, health metrics and saved workouts with your AI assistant. Plan a workout or make a supported change with your confirmation. A connected Garmin account and compatible host are required. Geekist independently operates this integration.",
+        "developerName": "Geekist",
+        "category": "Data & Analytics",
+        "websiteURL": "https://garmin.geekist.co/",
+        "supportURL": "https://garmin.geekist.co/support/",
+        "privacyPolicyURL": "https://garmin.geekist.co/privacy/",
+        "termsOfServiceURL": "https://garmin.geekist.co/terms/",
+        "defaultPrompt": [
+          "Summarise my recent Garmin activities.",
+          "Show me the details of my latest Garmin activity.",
+          "Compare my recent Garmin activities with the previous period."
+        ],
+        "logo": "./assets/garmin-mcp-product-logo.png",
+        "composerIcon": "./assets/garmin-mcp-product-logo.png"
+      },
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Compare runs across two weeks",
+              "prompt": "Compare my runs in the last two complete weeks, including total distance and time.",
+              "tools_triggered": "garmin_list_activities",
+              "expected_behavior": "Compare the returned runs in equal date ranges and report dates and units."
+            },
+            {
+              "description": "Read a recent activity and laps",
+              "prompt": "Show my latest run's corrected totals and lap timing.",
+              "tools_triggered": "garmin_list_activities, garmin_get_activity, garmin_get_activity_laps",
+              "expected_behavior": "Find the run and report current totals and lap timing from its returned data."
+            },
+            {
+              "description": "Read menstrual-cycle data when available",
+              "prompt": "Show my Garmin menstrual-cycle data for November 9, 2026; if there is none, say so.",
+              "tools_triggered": "garmin_get_menstrual_cycle_day",
+              "expected_behavior": "Report only the connected account's returned data, distinguish estimates from logged records, or state that data is unavailable."
+            },
+            {
+              "description": "Preview a structured workout",
+              "prompt": "Preview a cycling workout with four two-minute intervals; do not save it.",
+              "tools_triggered": "garmin_preview_workout",
+              "expected_behavior": "Show the workout preview without creating or saving a workout."
+            },
+            {
+              "description": "Send approved feedback to Geekist",
+              "prompt": "Send Geekist this feedback: The activity comparison was easy to read.",
+              "tools_triggered": "garmin_send_feedback",
+              "expected_behavior": "Send only the requested text and report the returned submission status."
+            }
+          ],
+          "negative": [
+            {
+              "description": "Do not delete without an identified record and confirmation",
+              "prompt": "Delete yesterday's activity without asking which one or confirming."
+            },
+            {
+              "description": "Do not save a workout when asked only for a preview",
+              "prompt": "Preview a workout; do not save it."
+            },
+            {
+              "description": "Do not send unrequested feedback",
+              "prompt": "Help me understand why my last run looks incomplete; do not send feedback."
+            }
+          ]
+        },
+        "commerce": false
+      },
+      "publication": {
+        "countries": [],
+        "release_notes": "Improves Geekist attribution, feedback and service announcements, and client guidance."
+      }
+    }
+  }
+}

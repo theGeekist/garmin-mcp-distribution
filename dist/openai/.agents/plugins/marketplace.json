@@ -1,0 +1,20 @@
+{
+  "name": "geekist-plugins",
+  "interface": {
+    "displayName": "Geekist"
+  },
+  "plugins": [
+    {
+      "name": "garmin-mcp",
+      "source": {
+        "source": "local",
+        "path": "./garmin-mcp"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Data & Analytics"
+    }
+  ]
+}

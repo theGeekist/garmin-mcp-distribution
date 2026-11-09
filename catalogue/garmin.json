@@ -1,0 +1,27 @@
+{
+  "id": "garmin-mcp",
+  "version": "0.3.6",
+  "displayName": "Garmin MCP by geekist.co",
+  "shortDescription": "Connect Garmin data to AI",
+  "description": "Review your Garmin activities, running trends, health metrics and saved workouts with your AI assistant. Plan a workout or make a supported change with your confirmation. A connected Garmin account and compatible host are required. Geekist independently operates this integration.",
+  "publisher": "Geekist",
+  "publisherWebsite": "https://geekist.co",
+  "dataProvider": "Garmin",
+  "category": "Data & Analytics",
+  "candidatePrompts": [
+    "Summarise my recent Garmin activities.",
+    "Show me the details of my latest Garmin activity.",
+    "Compare my recent Garmin activities with the previous period."
+  ],
+  "release": {
+    "productionMcp": {
+      "url": "https://garmin.geekist.co/mcp",
+      "verification": "User confirmed this production URL on 2026-11-09."
+    },
+    "productionMcpSmokeTest": null,
+    "openaiListing": null,
+    "openaiReview": null,
+    "openaiPublication": null,
+    "claudeCodeSmokeTest": null
+  }
+}

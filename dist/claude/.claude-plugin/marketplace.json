@@ -1,0 +1,13 @@
+{
+  "name": "geekist-plugins",
+  "owner": {
+    "name": "Geekist"
+  },
+  "plugins": [
+    {
+      "name": "garmin-mcp",
+      "source": "./plugins/garmin-mcp",
+      "description": "Review your Garmin activities, running trends, health metrics and saved workouts with your AI assistant. Plan a workout or make a supported change with your confirmation. A connected Garmin account and compatible host are required. Geekist independently operates this integration."
+    }
+  ]
+}

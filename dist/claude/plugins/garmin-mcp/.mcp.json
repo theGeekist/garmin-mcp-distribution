@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "garmin-mcp": {
+      "type": "http",
+      "url": "https://garmin.geekist.co/mcp"
+    }
+  }
+}
