@@ -27,11 +27,19 @@ jobs:
           test "$GITHUB_REF_NAME" = "v$VERSION"
           ASSET="garmin-mcp-$VERSION-gemini-cli.zip"
           if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
-            test "$(gh release view "$GITHUB_REF_NAME" --json isDraft --jq .isDraft)" = "false"
-            mkdir -p "$RUNNER_TEMP/existing-release"
-            gh release download "$GITHUB_REF_NAME" --pattern "$ASSET" --dir "$RUNNER_TEMP/existing-release"
-            cmp "dist/archives/$ASSET" "$RUNNER_TEMP/existing-release/$ASSET"
-            echo "Existing published release asset matches the verified build."
+            gh api "repos/$GITHUB_REPOSITORY/releases/tags/$GITHUB_REF_NAME" > "$RUNNER_TEMP/release.json"
+            python -c '
+          import hashlib, json, pathlib, sys
+          release = json.loads(pathlib.Path(sys.argv[1]).read_text())
+          asset = pathlib.Path(sys.argv[2])
+          matches = [a for a in release["assets"] if a["name"] == asset.name]
+          if release["draft"] or len(matches) != 1:
+              sys.exit("Expected one asset on a published release")
+          expected = "sha256:" + hashlib.sha256(asset.read_bytes()).hexdigest()
+          if matches[0].get("digest") != expected:
+              sys.exit("Published asset digest is missing or does not match")
+          ' "$RUNNER_TEMP/release.json" "dist/archives/$ASSET"
+            echo "Existing published release asset digest matches the verified build."
           else
             gh release create "$GITHUB_REF_NAME" "dist/archives/$ASSET" --verify-tag --title "Garmin MCP by geekist.co $VERSION" --generate-notes
           fi
