@@ -2,6 +2,8 @@
 
 # Garmin MCP by geekist.co
 
+[![Garmin MCP by geekist.co MCP connector – tool definition quality and endpoint health on Glama](https://glama.ai/mcp/connectors/io.github.theGeekist/garmin-mcp/badges/score.svg)](https://glama.ai/mcp/connectors/io.github.theGeekist/garmin-mcp)
+
 Ask your AI assistant about your Garmin Connect data. Review an activity and its laps, compare your running trends, or plan your next workout. Garmin MCP is free to use.
 
 [Connect your Garmin account](https://garmin.geekist.co/login) · [See what you can do](https://garmin.geekist.co/plans/)
