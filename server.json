@@ -7,7 +7,7 @@
   "websiteUrl": "https://garmin.geekist.co/",
   "icons": [
     {
-      "src": "https://garmin.geekist.co/assets/garmin-product-logo.png",
+      "src": "https://raw.githubusercontent.com/theGeekist/garmin-mcp-distribution/main/assets/garmin-mcp-product-logo.png",
       "mimeType": "image/png"
     }
   ],
