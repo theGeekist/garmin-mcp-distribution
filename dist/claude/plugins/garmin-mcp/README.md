@@ -1,4 +1,4 @@
-# Garmin MCP by geekist.co
+# Garmin by geekist.co
 
 Live MCP endpoint: `https://garmin.geekist.co/mcp`.
 

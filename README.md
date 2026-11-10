@@ -1,16 +1,16 @@
-<a href="https://garmin.geekist.co/"><img src="assets/garmin-mcp-product-logo.png" alt="Garmin MCP runner with connected data nodes" width="96"></a>
+<a href="https://garmin.geekist.co/"><img src="assets/garmin-mcp-product-logo.png" alt="Garmin runner with connected data nodes" width="96"></a>
 
-# Garmin MCP by geekist.co
+# Garmin by geekist.co
 
-[![Garmin MCP by geekist.co MCP connector – tool definition quality and endpoint health on Glama](https://glama.ai/mcp/connectors/io.github.theGeekist/garmin-mcp/badges/score.svg)](https://glama.ai/mcp/connectors/io.github.theGeekist/garmin-mcp)
+[![Garmin by geekist.co MCP connector – tool definition quality and endpoint health on Glama](https://glama.ai/mcp/connectors/io.github.theGeekist/garmin-mcp/badges/score.svg)](https://glama.ai/mcp/connectors/io.github.theGeekist/garmin-mcp)
 
-Ask your AI assistant about your Garmin Connect data. Review an activity and its laps, compare your running trends, or plan your next workout. Garmin MCP is free to use.
+Ask your AI assistant about your Garmin Connect data. Review an activity and its laps, compare your running trends, or plan your next workout. Garmin by geekist.co is free to use.
 
 [Connect your Garmin account](https://garmin.geekist.co/login) · [See what you can do](https://garmin.geekist.co/plans/)
 
 ## Connect your assistant
 
-1. [Sign in to Garmin MCP](https://garmin.geekist.co/login) and connect your Garmin account.
+1. [Sign in to Garmin by geekist.co](https://garmin.geekist.co/login) and connect your Garmin account.
 2. Add the remote Model Context Protocol (MCP) connection in your assistant, using its [setup guide](docs/clients/README.md). If prompted for a server URL, use:
 
    ```text
@@ -39,6 +39,6 @@ This repository contains client packages for Geekist’s hosted service. See the
 
 [Get help](https://garmin.geekist.co/support/) · [Privacy policy](https://garmin.geekist.co/privacy/) · [Service terms](https://garmin.geekist.co/terms/)
 
-Geekist operates Garmin MCP independently of Garmin.
+Geekist operates Garmin by geekist.co independently of Garmin.
 
 <a href="https://geekist.co/"><img src="assets/geekist-wordmark.svg" alt="Geekist" width="116"></a>

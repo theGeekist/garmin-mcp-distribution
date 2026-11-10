@@ -1,13 +1,13 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.theGeekist/garmin-mcp",
-  "title": "Garmin MCP by geekist.co",
+  "title": "Garmin by geekist.co",
   "description": "Explore Garmin activity and health data with your AI assistant.",
   "version": "0.3.6",
   "websiteUrl": "https://garmin.geekist.co/",
   "icons": [
     {
-      "src": "https://garmin.geekist.co/assets/garmin-mcp-product-logo.png",
+      "src": "https://garmin.geekist.co/assets/garmin-product-logo.png",
       "mimeType": "image/png"
     }
   ],

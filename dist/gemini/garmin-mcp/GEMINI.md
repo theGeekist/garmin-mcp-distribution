@@ -1,4 +1,4 @@
-# Garmin MCP by geekist.co
+# Garmin by geekist.co
 
 Use the `garmin-mcp` MCP server's discovered tools for the user's request. The live service is at `https://garmin.geekist.co/mcp`; available tools depend on the connected account. Follow each tool's schema and explain its effect before acting. Get the user's explicit confirmation before creating, editing, uploading or deleting Garmin data, or disconnecting the account. Do not claim a change succeeded unless the service confirms the outcome.
 

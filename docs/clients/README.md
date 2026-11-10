@@ -1,4 +1,4 @@
-# Connect Garmin MCP to your assistant
+# Connect Garmin to your assistant
 
 [Connect your Garmin account](https://garmin.geekist.co/login), then follow the instructions for your client. Use `https://garmin.geekist.co/mcp` when asked for the remote MCP server URL.
 
@@ -33,7 +33,7 @@ Complete authentication if prompted. Start a new chat and ask Codex to show your
 
 ## Claude plugin
 
-If your Claude account allows plugin uploads, go to **Customize → Plugins → Add → Upload plugin** and select the [Claude plugin ZIP](../../dist/archives/garmin-mcp-0.3.6-claude-plugin.zip). Open the plugin’s **Connectors** tab and connect Garmin MCP. [Claude plugin upload documentation](https://claude.com/docs/plugins/build#test-your-plugin)
+If your Claude account allows plugin uploads, go to **Customize → Plugins → Add → Upload plugin** and select the [Claude plugin ZIP](../../dist/archives/garmin-mcp-0.3.6-claude-plugin.zip). Open the plugin’s **Connectors** tab and connect Garmin. [Claude plugin upload documentation](https://claude.com/docs/plugins/build#test-your-plugin)
 
 ## Claude Code
 

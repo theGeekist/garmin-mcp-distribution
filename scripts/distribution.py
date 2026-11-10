@@ -69,7 +69,7 @@ def output_files(catalog):
     claude_plugin = claude / "plugins" / plugin_name
     description = catalog["description"]
     package_readme = (
-        "# Garmin MCP by geekist.co\n\n"
+        "# Garmin by geekist.co\n\n"
         + (f"Live MCP endpoint: `{endpoint}`.\n\n" if endpoint else "")
         + "Connect a compatible MCP client to Geekist's Garmin service and follow the "
         "client's authentication flow. The server exposes the tools available to your "
