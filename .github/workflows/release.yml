@@ -26,20 +26,28 @@ jobs:
           VERSION=$(python -c 'import json; print(json.load(open("catalogue/garmin.json"))["version"])')
           test "$GITHUB_REF_NAME" = "v$VERSION"
           ASSET="garmin-mcp-$VERSION-gemini-cli.zip"
-          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
-            gh api "repos/$GITHUB_REPOSITORY/releases/tags/$GITHUB_REF_NAME" > "$RUNNER_TEMP/release.json"
-            python -c '
+          gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/releases?per_page=100" > "$RUNNER_TEMP/releases.json"
+          RESULT=$(python -c '
           import hashlib, json, pathlib, sys
-          release = json.loads(pathlib.Path(sys.argv[1]).read_text())
-          asset = pathlib.Path(sys.argv[2])
-          matches = [a for a in release["assets"] if a["name"] == asset.name]
-          if release["draft"] or len(matches) != 1:
-              sys.exit("Expected one asset on a published release")
+          pages = json.loads(pathlib.Path(sys.argv[1]).read_text())
+          tag, asset = sys.argv[2], pathlib.Path(sys.argv[3])
+          releases = [r for page in pages for r in page if r["tag_name"] == tag]
+          if not releases:
+              print("absent")
+              sys.exit(0)
+          if len(releases) != 1 or releases[0]["draft"]:
+              sys.exit("Expected one published release for the tag")
+          matches = [a for a in releases[0]["assets"] if a["name"] == asset.name]
+          if len(matches) != 1:
+              sys.exit("Expected one asset on the published release")
           expected = "sha256:" + hashlib.sha256(asset.read_bytes()).hexdigest()
           if matches[0].get("digest") != expected:
               sys.exit("Published asset digest is missing or does not match")
-          ' "$RUNNER_TEMP/release.json" "dist/archives/$ASSET"
-            echo "Existing published release asset digest matches the verified build."
-          else
+          print("match")
+          ' "$RUNNER_TEMP/releases.json" "$GITHUB_REF_NAME" "dist/archives/$ASSET")
+          if [ "$RESULT" = "absent" ]; then
             gh release create "$GITHUB_REF_NAME" "dist/archives/$ASSET" --verify-tag --title "Garmin MCP by geekist.co $VERSION" --generate-notes
+          else
+            test "$RESULT" = "match"
+            echo "Existing published release asset digest matches the verified build."
           fi
