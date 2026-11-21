@@ -69,6 +69,7 @@ def output_files(catalog):
     openai_marketplace = Path("openai/.agents/plugins/marketplace.json")
     claude = Path("claude")
     gemini = Path("gemini", plugin_name)
+    agy = Path("antigravity", plugin_name)
     claude_plugin = claude / "plugins" / plugin_name
     description = catalog["description"]
     package_readme = (
@@ -176,6 +177,17 @@ def output_files(catalog):
         claude_plugin / logo: logo_data,
         gemini / "GEMINI.md": (ROOT / "providers/gemini/GEMINI.md").read_bytes(),
         gemini / "LICENSE": license_text,
+        agy / "LICENSE": license_text,
+        agy / logo: logo_data,
+        agy / "README.md": package_readme.encode(),
+        agy / "rules/AGENTS.md": (ROOT / "providers/gemini/GEMINI.md").read_bytes(),
+        agy / "plugin.json": encode_json({
+            "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+            **shared, "displayName": catalog["displayName"],
+            "logo": logo.as_posix(), "suggestedPrompts": catalog["candidatePrompts"],
+            "homepage": "https://garmin.geekist.co/",
+            "repository": "https://github.com/theGeekist/garmin-mcp-distribution",
+        }),
         claude_plugin / "LICENSE": license_text,
         claude_plugin / "README.md": (
             package_readme
@@ -186,13 +198,14 @@ def output_files(catalog):
             raise ValueError(f"Symlink in skill source: {path}")
         content = path.read_bytes()
         relative = path.relative_to(ROOT)
-        for folder in (openai, claude_plugin, gemini):
+        for folder in (openai, claude_plugin, gemini, agy):
             files[folder / relative] = content
     gemini_manifest = {"name": plugin_name, "version": catalog["version"], "description": description, "contextFileName": "GEMINI.md"}
     if endpoint is not None:
         gemini_manifest["mcpServers"] = {plugin_name: {"httpUrl": endpoint}}
     files[gemini / "gemini-extension.json"] = encode_json(gemini_manifest)
     if endpoint is not None:
+        files[agy / "mcp_config.json"] = encode_json({"mcpServers": {plugin_name: {"url": endpoint}}})
         for path, transport, portable in (
             (openai / "mcp.json", "streamable-http", True),
             (claude_plugin / ".mcp.json", "http", False),
@@ -205,6 +218,7 @@ def output_files(catalog):
     checksums = []
     for provider, folder in (
         ("gemini-cli", gemini),
+        ("antigravity", agy),
         ("claude-code", claude),
         ("claude-plugin", claude_plugin),
         ("codex-marketplace", openai.parent),

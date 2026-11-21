@@ -87,7 +87,7 @@ def sync(archive, digest, target=ROOT):
     (target / 'upstream/baseline-sha256.txt').write_text(digest + '\n')
     for name in ('README.md', 'docs/clients/README.md'):
         path = target / name
-        path.write_text(re.sub(r'garmin-mcp-\d+\.\d+\.\d+-(?=(?:codex-marketplace|claude-code|claude-plugin|gemini-cli|openai)\.zip)',
+        path.write_text(re.sub(r'garmin-mcp-\d+\.\d+\.\d+-(?=(?:codex-marketplace|claude-code|claude-plugin|gemini-cli|antigravity|openai)\.zip)',
                                f"garmin-mcp-{metadata['version']}-", path.read_text()))
 
 
