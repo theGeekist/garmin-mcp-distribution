@@ -61,12 +61,10 @@ python scripts/distribution.py build --official-schemas --output-dir /tmp/garmin
 
 The importer checks the digest, exact members, public endpoint and owner-language guard,
 then updates the catalogue, public skill, Gemini guidance, review metadata and versioned download links. Public branding and the package licence stay in this repository.
-Review the resulting changes and rebuild committed `dist` before updating this repository.
-The MCP registry manifest and publication are separate release operations.
+The importer synchronizes the registry manifest version with the package version while preserving its identity and endpoint.
 
 The **Build from public baseline** workflow listens for new versioned ZIPs in `baselines/` and also supports a manual run with an immutable revision and digest. It downloads no private
-source and uses no private-repository credential. It produces a short-lived workflow
-artifact; it does not commit, publish a release, update the registry or submit a plugin.
+source and uses no private-repository credential. It rebuilds and validates the provider packages, commits generated files, then tags and dispatches the GitHub Release and MCP Registry workflows. It never accesses the private repository or submits a plugin to OpenAI.
 
 Public package changes are recorded in [CHANGELOG.md](CHANGELOG.md).
 
@@ -78,6 +76,4 @@ five provider ZIPs and `SHA256SUMS` together, using the matching public changelo
 six published assets have the expected SHA-256 digests; incomplete or different
 releases require investigation and are never overwritten automatically.
 
-MCP Registry publication is a separate workflow using `server.json`. The same
-tag currently triggers it as well, and that workflow requires the registry
-version to match the tag. Check registry readiness before creating a version tag.
+MCP Registry publication is handled by a separate workflow using `server.json`. Its version is synchronized with the package catalogue by baseline import; publishing runs on the matching release tag.

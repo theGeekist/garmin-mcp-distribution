@@ -50,6 +50,9 @@ def inputs():
     for name in ("displayName", "shortDescription"):
         if not 1 <= len(catalog[name].strip()) <= 30 or "\n" in catalog[name]:
             raise ValueError(f"{name} must be one line of 1–30 characters.")
+    registry = read_json(ROOT / "server.json")
+    if registry.get("version") != catalog["version"]:
+        raise ValueError("MCP Registry version differs from the distribution catalogue.")
     return catalog
 
 

@@ -19,7 +19,11 @@ on:
         required: true
         type: string
 permissions:
-  contents: read
+  contents: write
+  actions: write
+concurrency:
+  group: public-distribution-update
+  cancel-in-progress: false
 jobs:
   package:
     runs-on: ubuntu-latest
@@ -27,7 +31,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 2
-          persist-credentials: false
+          persist-credentials: true
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -65,6 +69,68 @@ jobs:
       - run: python -m pip install -r requirements-validation.txt
       - run: python -m unittest discover -s tests -v
       - run: python scripts/distribution.py build --official-schemas --output-dir "$RUNNER_TEMP/packages"
+      - name: Commit generated distribution and dispatch versioned releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git fetch origin main --tags
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" || { echo 'Public main changed; retry this workflow.'; exit 1; }
+          rm -rf dist
+          cp -a "$RUNNER_TEMP/packages" dist
+          python scripts/distribution.py check --official-schemas
+          python scripts/release_notes.py CHANGELOG.md "$BASELINE_VERSION" > /dev/null
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add catalogue/garmin.json server.json CHANGELOG.md skills/garmin-review providers/gemini/GEMINI.md upstream README.md docs/clients/README.md dist
+          if ! git diff --cached --quiet; then
+            git commit -m "Build public Garmin distribution $BASELINE_VERSION"
+            git push origin HEAD:main
+          fi
+          tag="v$BASELINE_VERSION"
+          if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+            for file in server.json "dist/archives/garmin-mcp-${BASELINE_VERSION}-openai.zip" "dist/archives/garmin-mcp-${BASELINE_VERSION}-codex-marketplace.zip" "dist/archives/garmin-mcp-${BASELINE_VERSION}-claude-plugin.zip" "dist/archives/garmin-mcp-${BASELINE_VERSION}-claude-code.zip" "dist/archives/garmin-mcp-${BASELINE_VERSION}-gemini-cli.zip" dist/archives/SHA256SUMS; do
+              test "$(git show "$tag:$file" | sha256sum | cut -d ' ' -f 1)" = "$(sha256sum "$file" | cut -d ' ' -f 1)" || { echo "Existing tag differs: $file"; exit 1; }
+            done
+          else
+            git tag "$tag"
+            git push origin "refs/tags/$tag"
+          fi
+          gh workflow run release.yml --ref "$tag"
+          gh workflow run publish-mcp.yml --ref "$tag"
+      - name: Verify published release and registry
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version="$BASELINE_VERSION"
+          assets=("dist/archives/garmin-mcp-$version-openai.zip" "dist/archives/garmin-mcp-$version-codex-marketplace.zip" "dist/archives/garmin-mcp-$version-claude-plugin.zip" "dist/archives/garmin-mcp-$version-claude-code.zip" "dist/archives/garmin-mcp-$version-gemini-cli.zip" dist/archives/SHA256SUMS)
+          for attempt in {1..30}; do
+            release_ok=false
+            registry_ok=false
+            if gh api "repos/$GITHUB_REPOSITORY/releases/tags/v$version" > "$RUNNER_TEMP/release.json" 2>/dev/null; then
+              python - "$RUNNER_TEMP/release.json" "$RUNNER_TEMP/release-list.json" <<'PYRELEASE'
+          import json, pathlib, sys
+          pathlib.Path(sys.argv[2]).write_text(json.dumps([[json.loads(pathlib.Path(sys.argv[1]).read_text())]]))
+          PYRELEASE
+              if python scripts/verify_release_assets.py "$RUNNER_TEMP/release-list.json" "v$version" "${assets[@]}" | grep -qx match; then release_ok=true; fi
+            fi
+            if curl --fail --silent --show-error "https://registry.modelcontextprotocol.io/v0.1/servers/io.github.theGeekist%2Fgarmin-mcp/versions/$version" -o "$RUNNER_TEMP/registry.json" 2>/dev/null && python - "$RUNNER_TEMP/registry.json" <<'PYREGISTRY'
+          import json, pathlib, sys
+          actual=json.loads(pathlib.Path(sys.argv[1]).read_text())
+          expected=json.loads(pathlib.Path('server.json').read_text())
+          if actual.get('server') != expected or actual.get('_meta',{}).get('io.modelcontextprotocol.registry/official',{}).get('status') != 'active':
+              raise SystemExit(1)
+          PYREGISTRY
+            then registry_ok=true; fi
+            if [ "$release_ok" = true ] && [ "$registry_ok" = true ]; then
+              echo 'All release assets and the MCP Registry entry are verified.'
+              exit 0
+            fi
+            sleep 10
+          done
+          echo 'Release or registry publication did not verify within five minutes.' >&2
+          exit 1
       - uses: actions/upload-artifact@v4
         with:
           name: reviewed-public-distribution

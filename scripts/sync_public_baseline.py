@@ -47,11 +47,35 @@ def sync(archive, digest, target=ROOT):
         raise ValueError('Unexpected OpenAI review metadata')
     catalog_path = target / 'catalogue/garmin.json'
     catalog = json.loads(catalog_path.read_text())
+    old_version = catalog.get('version', '0.0.0')
+    if not re.fullmatch(r'(?:0|[1-9]\d*)(?:\.(?:0|[1-9]\d*)){2}', old_version) or tuple(map(int, metadata['version'].split('.'))) < tuple(map(int, old_version.split('.'))):
+        raise ValueError('Baseline must not downgrade the distribution version')
     if catalog['release']['productionMcp']['url'] != metadata['mcpEndpoint']:
         raise ValueError('Public catalogue endpoint differs from baseline')
+    registry_path = target / 'server.json'
+    registry = json.loads(registry_path.read_text())
+    if registry.get('name') != 'io.github.theGeekist/garmin-mcp' or not any(r.get('url') == metadata['mcpEndpoint'] for r in registry.get('remotes', [])):
+        raise ValueError('Registry identity or endpoint differs from baseline')
+    registry['version'] = metadata['version']
     for key in ('id','version','description','displayName','shortDescription','publisher','publisherWebsite','dataProvider','category','candidatePrompts'):
         catalog[key] = metadata[key]
+    changelog_path = target / 'CHANGELOG.md'
+    changelog = changelog_path.read_text()
+    heading = f"## {metadata['version']}"
+    headings = re.findall(r'^## (\d+\.\d+\.\d+)\s*$', changelog, re.M)
+    if headings.count(metadata['version']) > 1:
+        raise ValueError('Duplicate public changelog version')
+    if metadata['version'] not in headings:
+        notes = review['publication'].get('release_notes')
+        if not isinstance(notes, str) or not notes.strip() or '\n' in notes or len(notes) > 1000:
+            raise ValueError('A concise public release note is required')
+        first = re.search(r'^## \d+\.\d+\.\d+\s*$', changelog, re.M)
+        if not first:
+            raise ValueError('Public changelog has no version headings')
+        changelog = changelog[:first.start()] + heading + '\n\n- ' + notes.strip() + '\n\n' + changelog[first.start():]
+    changelog_path.write_text(changelog)
     catalog_path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2) + '\n')
+    registry_path.write_text(json.dumps(registry, ensure_ascii=False, indent=2) + '\n')
     for name in FILES:
         dest = target / name
         dest.parent.mkdir(parents=True, exist_ok=True)
