@@ -89,7 +89,7 @@ jobs:
           fi
           tag="v$BASELINE_VERSION"
           if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
-            for file in server.json "dist/archives/garmin-mcp-${BASELINE_VERSION}-openai.zip" "dist/archives/garmin-mcp-${BASELINE_VERSION}-codex-marketplace.zip" "dist/archives/garmin-mcp-${BASELINE_VERSION}-claude-plugin.zip" "dist/archives/garmin-mcp-${BASELINE_VERSION}-claude-code.zip" "dist/archives/garmin-mcp-${BASELINE_VERSION}-gemini-cli.zip" dist/archives/SHA256SUMS; do
+            for file in server.json "dist/archives/garmin-mcp-${BASELINE_VERSION}-openai.zip" "dist/archives/garmin-mcp-${BASELINE_VERSION}-codex-marketplace.zip" "dist/archives/garmin-mcp-${BASELINE_VERSION}-claude-plugin.zip" "dist/archives/garmin-mcp-${BASELINE_VERSION}-claude-code.zip" "dist/archives/garmin-mcp-${BASELINE_VERSION}-gemini-cli.zip" "dist/archives/garmin-mcp-${BASELINE_VERSION}-antigravity.zip" dist/archives/SHA256SUMS; do
               test "$(git show "$tag:$file" | sha256sum | cut -d ' ' -f 1)" = "$(sha256sum "$file" | cut -d ' ' -f 1)" || { echo "Existing tag differs: $file"; exit 1; }
             done
           else
@@ -104,7 +104,7 @@ jobs:
         run: |
           set -euo pipefail
           version="$BASELINE_VERSION"
-          assets=("dist/archives/garmin-mcp-$version-openai.zip" "dist/archives/garmin-mcp-$version-codex-marketplace.zip" "dist/archives/garmin-mcp-$version-claude-plugin.zip" "dist/archives/garmin-mcp-$version-claude-code.zip" "dist/archives/garmin-mcp-$version-gemini-cli.zip" dist/archives/SHA256SUMS)
+          assets=("dist/archives/garmin-mcp-$version-openai.zip" "dist/archives/garmin-mcp-$version-codex-marketplace.zip" "dist/archives/garmin-mcp-$version-claude-plugin.zip" "dist/archives/garmin-mcp-$version-claude-code.zip" "dist/archives/garmin-mcp-$version-gemini-cli.zip" "dist/archives/garmin-mcp-$version-antigravity.zip" dist/archives/SHA256SUMS)
           for attempt in {1..30}; do
             release_ok=false
             registry_ok=false

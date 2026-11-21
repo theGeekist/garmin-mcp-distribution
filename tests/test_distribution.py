@@ -65,7 +65,7 @@ class Packages(unittest.TestCase):
     def test_archives_have_self_contained_layout_and_matching_checksums(self):
         sums_path = Path("archives/SHA256SUMS")
         lines = self.files[sums_path].decode().splitlines()
-        self.assertEqual(len(lines), 5)
+        self.assertEqual(len(lines), 6)
         self.assertTrue(all("-review.zip" not in line for line in lines))
         for line in lines:
             checksum, name = line.split("  ", 1)
@@ -86,6 +86,14 @@ class Packages(unittest.TestCase):
                         manifest = json.loads(archive.read("gemini-extension.json"))
                         self.assertEqual(manifest["mcpServers"]["garmin-mcp"], {"httpUrl": "https://garmin.geekist.co/mcp"})
                         self.assertNotIn("includeTools", manifest["mcpServers"]["garmin-mcp"])
+                    elif "antigravity" in name:
+                        manifest = json.loads(archive.read("plugin.json"))
+                        self.assertEqual(manifest["version"], self.catalog["version"])
+                        self.assertIn(manifest["logo"], members)
+                        self.assertEqual(json.loads(archive.read("mcp_config.json"))["mcpServers"]["garmin-mcp"]["url"], self.catalog["release"]["productionMcp"]["url"])
+                        self.assertIn("rules/AGENTS.md", members)
+                        self.assertIn(b"https://garmin.geekist.co/", archive.read("README.md"))
+                        self.assertIn(b"https://garmin.geekist.co/support/", archive.read("README.md"))
                     elif "openai" in name:
                         self.assertIn("plugin.json", members)
                         self.assertNotIn("REVIEW.md", members)
@@ -160,6 +168,9 @@ class Packages(unittest.TestCase):
             if "extensions" in manifest:
                 interface = manifest["extensions"]["com.openai"]["interface"]
                 paths = [interface["logo"], interface["composerIcon"]]
+                plugin_root = path.parent
+            elif "logo" in manifest:
+                paths = [manifest["logo"]]
                 plugin_root = path.parent
             else:
                 paths = [manifest["icon"]]

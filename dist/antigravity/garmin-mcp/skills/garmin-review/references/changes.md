@@ -1,0 +1,12 @@
+# Previewing and changing Garmin data
+
+Follow the actual tool schema and the connected account's current records. A request to analyse or plan stays read-only until the user asks to save or change something. Present the exact proposed write and obtain explicit confirmation before calling a mutating tool, in addition to any host approval or Garmin scope requirements.
+
+- **Build a workout.** Use `garmin_preview_workout` for a running or cycling workout. Present the complete unsaved preview: sport, ordered steps, repeats, durations or distances, target ranges and units. After the user confirms that exact preview, call `garmin_create_workout` with its unchanged specification, confirmation token and `confirmed: true`. Preview again if the details change or the token expires. On uncertain creation, inspect the returned ID through `garmin_get_workout` or check the saved workout list before any retry.
+- **Correct an activity.** Read the current record first. Show the activity ID and the precise before-and-after values. Call `garmin_update_activity` with only the confirmed fields. Follow the schema's metres and seconds.
+- **Add a completed activity.** Establish the sport, date, start time, IANA time zone, name, distance and duration, using `garmin_activity_types` as needed. Show those values before calling `garmin_create_activity` with the user's confirmation.
+- **Import a recorded activity.** Confirm the supplied FIT, GPX or TCX filename, content and requested import mode before calling `garmin_upload_activity`. Use the tool-supported file representation, keeping raw file/base64 data out of the chat response. Do not change the upload mode to retry an uncertain result.
+- **Delete an activity or workout.** Resolve the exact record, show its identity and the deletion consequence, then use `garmin_delete_activity` or `garmin_delete_workout` with the required `confirmed: true` only after explicit confirmation.
+- **Disconnect Garmin.** Explain the hosted account/session removal before calling `garmin_disconnect_account` on the user's explicit request. Distinguish the hosted connection from removing the MCP plugin in the assistant and independently revoking any Garmin API key.
+
+Report the returned `status`, `outcome` and `code` when present. Confirm success only when the service reports it. If a write's outcome is uncertain, verify through a supported read-back or explain how to check in Garmin Connect; never blindly repeat it or infer deletion from missing data or a timeout. Follow the host's approval process for each mutation.

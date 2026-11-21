@@ -72,7 +72,7 @@ class PublicBaseline(unittest.TestCase):
             self.assertEqual(files[Path('gemini/garmin-mcp/GEMINI.md')],b'public content')
             self.assertEqual(files[Path('openai/garmin-mcp/LICENSE')],(root/'LICENSE').read_bytes())
             self.assertEqual(files[Path('openai/garmin-mcp/assets/garmin-mcp-product-logo.png')],(root/'assets/garmin-mcp-product-logo.png').read_bytes())
-            self.assertEqual(len([p for p in files if p.suffix=='.zip']),5)
+            self.assertEqual(len([p for p in files if p.suffix=='.zip']),6)
 
     def test_rejects_downgrade_and_registry_mismatch_without_writes(self):
         for mode in ('downgrade','registry'):

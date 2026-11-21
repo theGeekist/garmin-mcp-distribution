@@ -33,6 +33,7 @@ jobs:
             "dist/archives/garmin-mcp-$VERSION-claude-plugin.zip"
             "dist/archives/garmin-mcp-$VERSION-claude-code.zip"
             "dist/archives/garmin-mcp-$VERSION-gemini-cli.zip"
+            "dist/archives/garmin-mcp-$VERSION-antigravity.zip"
             "dist/archives/SHA256SUMS"
           )
           for asset in "${assets[@]}"; do test -f "$asset"; done

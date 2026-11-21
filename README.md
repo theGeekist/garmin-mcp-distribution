@@ -6,7 +6,7 @@
 
 Ask your AI assistant about your Garmin Connect data. Review an activity and its laps, compare your running trends, or plan your next workout. Garmin by geekist.co is free to use.
 
-[Connect your Garmin account](https://garmin.geekist.co/login) · [See what you can do](https://garmin.geekist.co/plans/)
+[Visit Garmin by geekist.co](https://garmin.geekist.co/) · [Connect your Garmin account](https://garmin.geekist.co/login) · [See what you can do](https://garmin.geekist.co/plans/) · [Get help](https://garmin.geekist.co/support/)
 
 ## Connect your assistant
 
@@ -30,6 +30,7 @@ Choose a local package if you want the connection and the bundled [Garmin review
 | Codex | [Local marketplace ZIP](dist/archives/garmin-mcp-0.3.14-codex-marketplace.zip) |
 | Claude Code | [Local marketplace ZIP](dist/archives/garmin-mcp-0.3.14-claude-code.zip) |
 | Claude | [Standalone plugin ZIP](dist/archives/garmin-mcp-0.3.14-claude-plugin.zip) |
+| Antigravity | [Plugin ZIP](dist/archives/garmin-mcp-0.3.14-antigravity.zip) |
 | Gemini CLI | [Extension ZIP](dist/archives/garmin-mcp-0.3.14-gemini-cli.zip) |
 | OpenAI plugin hosts | [Portable plugin ZIP](dist/archives/garmin-mcp-0.3.14-openai.zip) |
 
@@ -72,7 +73,7 @@ Public package changes are recorded in [CHANGELOG.md](CHANGELOG.md).
 
 A `vVERSION` tag triggers the distribution release workflow after it validates
 committed packages and checks the tag against the catalogue. It attaches the
-five provider ZIPs and `SHA256SUMS` together, using the matching public changelog entry for release notes. Re-running succeeds only when all
+six provider ZIPs and `SHA256SUMS` together, using the matching public changelog entry for release notes. Re-running succeeds only when all
 six published assets have the expected SHA-256 digests; incomplete or different
 releases require investigation and are never overwritten automatically.
 
