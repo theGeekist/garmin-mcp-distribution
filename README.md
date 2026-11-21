@@ -64,7 +64,6 @@ then updates the catalogue, public skill, Gemini guidance, review metadata and v
 Review the resulting changes and rebuild committed `dist` before updating this repository.
 The MCP registry manifest and publication are separate release operations.
 
-The manual **Build from public baseline** workflow accepts only a baseline committed to this repository at an immutable
-revision and its expected digest. It downloads no private
+The **Build from public baseline** workflow listens for new versioned ZIPs in `baselines/` and also supports a manual run with an immutable revision and digest. It downloads no private
 source and uses no private-repository credential. It produces a short-lived workflow
 artifact; it does not commit, publish a release, update the registry or submit a plugin.

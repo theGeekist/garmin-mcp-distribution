@@ -1,9 +1,13 @@
 name: Build from public baseline
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'baselines/**/*.zip'
   workflow_dispatch:
     inputs:
       revision:
-        description: Public repository commit containing the reviewed baseline
+        description: Public commit containing the baseline
         required: true
         type: string
       version:
@@ -22,24 +26,40 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
+          fetch-depth: 2
           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Fetch and validate public baseline
+      - name: Select and validate public baseline
         env:
-          REVISION: ${{ inputs.revision }}
-          VERSION: ${{ inputs.version }}
-          BASELINE_SHA: ${{ inputs.sha256 }}
+          EVENT_NAME: ${{ github.event_name }}
+          REQUEST_REVISION: ${{ inputs.revision }}
+          REQUEST_VERSION: ${{ inputs.version }}
+          REQUEST_SHA: ${{ inputs.sha256 }}
+          HEAD_REVISION: ${{ github.sha }}
         run: |
           python - <<'PY'
-          import os, re
-          if not re.fullmatch(r'[0-9a-f]{40}', os.environ['REVISION']):
-              raise SystemExit('Expected a full commit SHA')
-          if not re.fullmatch(r'(?:0|[1-9]\d*)(?:\.(?:0|[1-9]\d*)){2}', os.environ['VERSION']):
-              raise SystemExit('Invalid baseline version')
+          import hashlib, os, pathlib, re, subprocess
+          version_pattern = r'(?:0|[1-9]\d*)(?:\.(?:0|[1-9]\d*)){2}'
+          if os.environ['EVENT_NAME'] == 'push':
+              names = subprocess.check_output(['git', 'diff-tree', '--no-commit-id', '--name-only', '--diff-filter=AM', '-r', 'HEAD'], text=True).splitlines()
+              matches = [(m.group(1), name) for name in names if (m := re.fullmatch(r'baselines/(' + version_pattern + r')/garmin-mcp-\1-public-baseline\.zip', name))]
+              if len(matches) != 1:
+                  raise SystemExit('Expected exactly one added or modified versioned baseline')
+              version, path = matches[0]
+              digest = hashlib.sha256(pathlib.Path(path).read_bytes()).hexdigest()
+              revision = os.environ['HEAD_REVISION']
+          else:
+              version, revision, digest = (os.environ[x] for x in ('REQUEST_VERSION', 'REQUEST_REVISION', 'REQUEST_SHA'))
+          if not re.fullmatch(version_pattern, version) or not re.fullmatch(r'[0-9a-f]{40}', revision) or not re.fullmatch(r'[0-9a-f]{64}', digest):
+              raise SystemExit('Invalid version, commit or digest')
+          with open(os.environ['GITHUB_ENV'], 'a') as out:
+              out.write(f'BASELINE_VERSION={version}\nBASELINE_REVISION={revision}\nBASELINE_SHA={digest}\n')
           PY
-          url="https://raw.githubusercontent.com/theGeekist/garmin-mcp-distribution/${REVISION}/baselines/garmin-mcp-${VERSION}-public-baseline.zip"
+      - name: Download the published baseline
+        run: |
+          url="https://raw.githubusercontent.com/theGeekist/garmin-mcp-distribution/${BASELINE_REVISION}/baselines/${BASELINE_VERSION}/garmin-mcp-${BASELINE_VERSION}-public-baseline.zip"
           curl --fail --location --silent --show-error --proto '=https' --proto-redir '=https' --max-filesize 1048576 "$url" -o "$RUNNER_TEMP/baseline.zip"
           python scripts/sync_public_baseline.py --baseline "$RUNNER_TEMP/baseline.zip" --sha256 "$BASELINE_SHA"
       - run: python -m pip install -r requirements-validation.txt
