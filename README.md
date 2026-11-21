@@ -68,11 +68,13 @@ The **Build from public baseline** workflow listens for new versioned ZIPs in `b
 source and uses no private-repository credential. It produces a short-lived workflow
 artifact; it does not commit, publish a release, update the registry or submit a plugin.
 
+Public package changes are recorded in [CHANGELOG.md](CHANGELOG.md).
+
 ## Versioned GitHub releases
 
 A `vVERSION` tag triggers the distribution release workflow after it validates
 committed packages and checks the tag against the catalogue. It attaches the
-five provider ZIPs and `SHA256SUMS` together. Re-running succeeds only when all
+five provider ZIPs and `SHA256SUMS` together, using the matching public changelog entry for release notes. Re-running succeeds only when all
 six published assets have the expected SHA-256 digests; incomplete or different
 releases require investigation and are never overwritten automatically.
 

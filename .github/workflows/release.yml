@@ -35,10 +35,11 @@ jobs:
             "dist/archives/SHA256SUMS"
           )
           for asset in "${assets[@]}"; do test -f "$asset"; done
+          python scripts/release_notes.py CHANGELOG.md "$VERSION" > "$RUNNER_TEMP/release-notes.md"
           gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/releases?per_page=100" > "$RUNNER_TEMP/releases.json"
           result=$(python scripts/verify_release_assets.py "$RUNNER_TEMP/releases.json" "$GITHUB_REF_NAME" "${assets[@]}")
           if [ "$result" = absent ]; then
-            gh release create "$GITHUB_REF_NAME" "${assets[@]}" --verify-tag --title "Garmin MCP by geekist.co $VERSION" --generate-notes
+            gh release create "$GITHUB_REF_NAME" "${assets[@]}" --verify-tag --title "Garmin MCP by geekist.co $VERSION" --notes-file "$RUNNER_TEMP/release-notes.md"
             gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/releases?per_page=100" > "$RUNNER_TEMP/releases.json"
             test "$(python scripts/verify_release_assets.py "$RUNNER_TEMP/releases.json" "$GITHUB_REF_NAME" "${assets[@]}")" = match
           else
