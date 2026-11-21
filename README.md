@@ -6,7 +6,7 @@
 
 Ask your AI assistant about your Garmin Connect data. Review an activity and its laps, compare your running trends, or plan your next workout. Garmin by geekist.co is free to use.
 
-[Connect your Garmin account](https://garmin.geekist.co/login) · [See what you can do](https://garmin.geekist.co/plans/)
+[Visit Garmin by geekist.co](https://garmin.geekist.co/) · [Connect your Garmin account](https://garmin.geekist.co/login) · [See what you can do](https://garmin.geekist.co/plans/) · [Get help](https://garmin.geekist.co/support/)
 
 ## Connect your assistant
 

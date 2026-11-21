@@ -179,7 +179,10 @@ def output_files(catalog):
         gemini / "LICENSE": license_text,
         agy / "LICENSE": license_text,
         agy / logo: logo_data,
-        agy / "README.md": package_readme.encode(),
+        agy / "README.md": (package_readme + "\n[Garmin by geekist.co](https://garmin.geekist.co/) · "
+                            "[Connect your Garmin account](https://garmin.geekist.co/login) · "
+                            "[Get help](https://garmin.geekist.co/support/) · "
+                            "[Privacy policy](https://garmin.geekist.co/privacy/)\n").encode(),
         agy / "rules/AGENTS.md": (ROOT / "providers/gemini/GEMINI.md").read_bytes(),
         agy / "plugin.json": encode_json({
             "$schema": "https://antigravity.google/schemas/v1/plugin.json",

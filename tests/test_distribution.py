@@ -92,6 +92,8 @@ class Packages(unittest.TestCase):
                         self.assertIn(manifest["logo"], members)
                         self.assertEqual(json.loads(archive.read("mcp_config.json"))["mcpServers"]["garmin-mcp"]["url"], self.catalog["release"]["productionMcp"]["url"])
                         self.assertIn("rules/AGENTS.md", members)
+                        self.assertIn(b"https://garmin.geekist.co/", archive.read("README.md"))
+                        self.assertIn(b"https://garmin.geekist.co/support/", archive.read("README.md"))
                     elif "openai" in name:
                         self.assertIn("plugin.json", members)
                         self.assertNotIn("REVIEW.md", members)
