@@ -67,3 +67,15 @@ The MCP registry manifest and publication are separate release operations.
 The **Build from public baseline** workflow listens for new versioned ZIPs in `baselines/` and also supports a manual run with an immutable revision and digest. It downloads no private
 source and uses no private-repository credential. It produces a short-lived workflow
 artifact; it does not commit, publish a release, update the registry or submit a plugin.
+
+## Versioned GitHub releases
+
+A `vVERSION` tag triggers the distribution release workflow after it validates
+committed packages and checks the tag against the catalogue. It attaches the
+five provider ZIPs and `SHA256SUMS` together. Re-running succeeds only when all
+six published assets have the expected SHA-256 digests; incomplete or different
+releases require investigation and are never overwritten automatically.
+
+MCP Registry publication is a separate workflow using `server.json`. The same
+tag currently triggers it as well, and that workflow requires the registry
+version to match the tag. Check registry readiness before creating a version tag.
