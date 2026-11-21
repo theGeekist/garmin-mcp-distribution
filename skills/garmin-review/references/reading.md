@@ -1,21 +1,29 @@
 # Reading Garmin data
 
-| Request | Tool and approach |
+Choose the smallest appropriate set of tools for the user's question. Use tool discovery and schemas from the actual connection rather than relying on names remembered from an older release.
+
+| User request | Tool selection and interpretation |
 | --- | --- |
-| Find or compare activities | Start with `garmin_list_activities` using the requested dates and sport. Follow pagination within the requested period. Use equal-length comparison windows by default, name the dates and flag a partial current period. Use the account's calendar dates where available and state a meaningful date or time-zone assumption. |
-| Inspect an activity | Resolve its ID with the list, then call `garmin_get_activity`. If several records match, show the identifying details needed to pick one. Use the current Garmin Connect summary for distance, duration and derived pace where it differs from device samples. |
-| Review laps, sensors or effort | Use `garmin_get_activity_laps`, `garmin_get_activity_samples` or `garmin_get_activity_effort` only when relevant. Follow `nextOffset` for the sample range needed. Distinguish laps and samples from corrected activity totals and flag missing effort or feeling. |
-| Running trends and records | Use `garmin_get_running_trends` for supported 28–90-day running windows and `garmin_get_personal_records` for Garmin's recorded personal bests. For a different comparison window, use bounded activity reads. Label incomplete trends and distinguish tool-provided records from bests derived from the retrieved subset. |
-| Daily metrics | Use `garmin_get_daily_health` for a date and metric such as sleep, heart rate, HRV, Body Battery, stress, steps or weight. Use `garmin_get_daily_summaries` for a supported date range. Label the metric, units and calendar dates. |
-| Menstrual cycle tracking | Use `garmin_get_menstrual_cycle_summary` for a summary or `garmin_get_menstrual_cycle_day` for details on a specific date. See [Menstrual cycle records](#menstrual-cycle-records) for dates, estimates and missing data. |
-| Saved workouts | Use `garmin_list_workouts` to locate records and `garmin_get_workout` with the selected workout ID to inspect one. |
-| Other Garmin data | Use `garmin_data_catalog` to discover supported queries before calling `garmin_read_data`. Use the catalog's argument definitions and never invent upstream paths. |
-| Connection status | Use `garmin_account_status` if exposed and relevant. If the MCP connection itself is unavailable, direct the user to their host's connection setup or work with data they choose to supply. |
+| Recent runs, activities or comparisons | Start with `garmin_list_activities` for bounded date and sport filters. For advanced text or performance filters use `garmin_search_activities`. Follow pagination where required. Compare equal-length, complete periods unless the user asks otherwise. |
+| One activity | Resolve the activity ID from the list or search, then use `garmin_get_activity` for current totals. Use `garmin_get_activity_details` only when its additional fields are relevant. If several records match, identify the candidates rather than picking one arbitrarily. |
+| Lap timing, effort, heart rate or other sensors | Use `garmin_get_activity_laps` for laps, `garmin_get_activity_effort` for perceived effort and `garmin_get_activity_samples` for recorded time-series data. Follow `nextOffset` for the necessary range. Prefer corrected Garmin Connect totals to recorded file values for final distance, duration and derived pace. |
+| Original exercise file | Use `garmin_get_activity_fit_file` for original FIT/ZIP file data when an export or file-level investigation is requested, respecting paging and checksum continuity. |
+| Personal bests or running progress | Use `garmin_get_personal_records` for Garmin's recognised records and `garmin_get_running_trends` for supported 28–90-day periods. For other windows use appropriately bounded activity history. Clearly distinguish Garmin-held records from bests calculated over a retrieved subset, and mark incomplete analyses. |
+| Daily recovery or activity metrics | Use `garmin_get_daily_health` for one date and metric and `garmin_get_daily_summaries` for a supported cross-metric period. Use a dedicated metric history tool for a deeper trend in sleep, heart rate, HRV, Body Battery, stress, steps, hydration or weight. |
+| Daily or historical wellness | Use `garmin_get_wellness_summary` for a native daily wellness response and `garmin_get_wellness_history` for its historical equivalent; do not assume these are identical to convenience summaries. |
+| Weight | Use `garmin_get_weight_history` for progression, `garmin_get_weight_measurements` for individual readings and `garmin_get_weight_goals` when goals matter. |
+| Heart-rate training zones or fitness age | Use `garmin_get_heart_rate_zones` or `garmin_get_fitness_age`, respectively, if the question requires Garmin's configured zones or estimate. |
+| Cycle tracking | Use `garmin_get_cycle_summary` for an overview and `garmin_get_cycle_day` for a selected day's entries or Garmin analysis. See [Cycle tracking](#cycle-tracking). |
+| Saved workouts | Use `garmin_list_workouts` to find saved sessions and `garmin_get_workout` to inspect one. For the workout linked to a completed activity, use `garmin_get_activity_workouts`. |
+| Other documented data | Use `garmin_data_catalog` to discover available endpoints and dedicated tools. Prefer the dedicated tool. Use `garmin_read_data` only if it remains exposed and needed for data not supported by the dedicated interface. Do not invent endpoint paths or parameters. |
+| Account and connection | Use `garmin_account_status` for relevant connection capabilities. Use `garmin_get_profile_settings` when units or account preferences matter. If the connection itself is unavailable, direct the user to its host's reconnect flow and Geekist support. |
 
-When combining Garmin results with another user-authorized source, label each source and align dates and units before calculating. Link to the activity if the tool supplied a link. For a chart or export, use only the necessary fields and avoid sharing it externally without explicit authorization.
+Align time zones, calendar dates, measurements and units across combined results. Report which period and data support calculations; do not silently treat a partial or missing record as a complete zero. For charts or exports, include the fields necessary for the request and confirm before external sharing.
 
-## Menstrual cycle records
+## Cycle tracking
 
-Read cycle data when the user asks for it. Use their Garmin calendar date as `calendarDate` in `YYYY-MM-DD` format. For the day view, pass the current date in the user’s time zone as `todayDate`, including when looking up an earlier day. Use `includeAnalysis: true` when the user asks for Garmin’s analysis. If only the generic tool is available, look up the supported cycle endpoints and arguments with `garmin_data_catalog`. [Garmin Personal API reference client](https://github.com/garmin/connect-personal-api-python)
+Read cycle data when requested. Use `calendarDate` in `YYYY-MM-DD` format. For day views, pass the present calendar date in the user's time zone as `todayDate`, including when reading an earlier day. Request `includeAnalysis: true` when the user asks for Garmin's analysis. Use the currently exposed parameter schema.
 
-Identify logged records and Garmin estimates separately. When a successful response is empty or lacks a requested value, say what Garmin did not return for that date. If the call fails, report the failed read separately. Use the returned records to answer the request and keep clinical conclusions, pregnancy inferences and fertility advice out of the cycle review.
+Separate user-logged entries from Garmin-generated estimates. When the response has no entry for the requested date, state what was returned rather than extrapolating. Do not turn device estimates into clinical conclusions, pregnancy inferences or contraception or fertility advice.
+
+If only a generic endpoint reader exists, obtain the documented endpoint and arguments through `garmin_data_catalog`. Retrieved FIT files may contain GPS and device details; request them only when relevant to the user's intended analysis.

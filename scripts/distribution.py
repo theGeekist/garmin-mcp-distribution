@@ -128,6 +128,20 @@ def output_files(catalog):
             },
         },
     }
+    # Public baseline contributes OpenAI-specific review fields. General copy,
+    # branding and provider layout remain governed by the public catalogue.
+    imported = ROOT / "upstream/openai-review.json"
+    if imported.exists():
+        review = read_json(imported)
+        if set(review) != {"review", "publication"}:
+            raise ValueError("Invalid imported OpenAI review metadata.")
+        interface = openai_manifest["extensions"]["com.openai"]["interface"]
+        urls = read_json(ROOT / "upstream/public-urls.json")
+        if set(urls) != {"websiteURL", "supportURL", "privacyPolicyURL", "termsOfServiceURL"} or not all(public_https(value) for value in urls.values()):
+            raise ValueError("Invalid imported OpenAI URLs.")
+        interface.update(urls)
+        openai_manifest["extensions"]["com.openai"]["review"] = review["review"]
+        openai_manifest["extensions"]["com.openai"]["publication"] = review["publication"]
     marketplace_name = "geekist-plugins"
     codex_marketplace = {
         "name": marketplace_name,

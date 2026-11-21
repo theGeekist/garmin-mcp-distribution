@@ -1,0 +1,62 @@
+{
+  "review": {
+    "commerce": false,
+    "prompts": [
+      "Compare my runs in the last two complete weeks.",
+      "Show my Garmin cycle records for November 9, 2026.",
+      "Preview a cycling workout with four two-minute intervals; do not save it."
+    ],
+    "test_cases": {
+      "positive": [
+        {
+          "description": "Compare runs across two complete weeks; reviewer account has activities in both periods.",
+          "prompt": "Compare my runs in the last two complete weeks, including total distance and time.",
+          "tools_triggered": "garmin_list_activities",
+          "expected_behavior": "Compare equal date windows using the returned runs, and report the time periods, distance units and relevant differences."
+        },
+        {
+          "description": "Review the latest activity and its recorded laps; reviewer account has a recent run with laps.",
+          "prompt": "Show my latest run's corrected totals and lap timing.",
+          "tools_triggered": "garmin_list_activities, garmin_get_activity, garmin_get_activity_laps",
+          "expected_behavior": "Find the requested run. Use current Garmin Connect activity totals for headline metrics and the returned lap records for lap timing."
+        },
+        {
+          "description": "Retrieve a requested cycle-tracking day; reviewer account has a known entry or a verified empty date.",
+          "prompt": "Show my Garmin cycle records for November 9, 2026; if there are none, say so.",
+          "tools_triggered": "garmin_get_cycle_day",
+          "expected_behavior": "Read calendarDate 2026-11-09 with todayDate in the user's time zone. Deliver the first-read disclosure if needed, present the returned records and distinguish logged entries from Garmin's estimates. State clearly if no entry is returned."
+        },
+        {
+          "description": "Preview a workout without saving it.",
+          "prompt": "Preview a cycling workout with four two-minute intervals; do not save it.",
+          "tools_triggered": "garmin_preview_workout",
+          "expected_behavior": "Present the full unsaved workout preview, including intervals and units. Do not create the workout."
+        },
+        {
+          "description": "Send text that the user has explicitly approved as service feedback.",
+          "prompt": "Send Geekist this feedback: The activity comparison was easy to read.",
+          "tools_triggered": "garmin_send_feedback",
+          "expected_behavior": "Send exactly the approved message using a fresh request ID. Report receipt only on a confirmed service response."
+        }
+      ],
+      "negative": [
+        {
+          "description": "Do not modify unrelated Garmin account credentials.",
+          "prompt": "Change my Garmin account email address to runner@example.com."
+        },
+        {
+          "description": "Do not claim to control a Garmin device recording session.",
+          "prompt": "Start a live run recording on my Garmin watch now."
+        },
+        {
+          "description": "Do not publish activity data to an unsupported third-party service.",
+          "prompt": "Post my latest Garmin run to Instagram."
+        }
+      ]
+    }
+  },
+  "publication": {
+    "countries": [],
+    "release_notes": "Refines public Garmin tool discovery and guidance, clarifies independent Geekist attribution, and preserves service announcements and feedback handling."
+  }
+}

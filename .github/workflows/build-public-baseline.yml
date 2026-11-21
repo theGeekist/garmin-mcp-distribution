@@ -1,0 +1,63 @@
+name: Build from public baseline
+on:
+  workflow_dispatch:
+    inputs:
+      revision:
+        description: Public repository commit containing the reviewed baseline
+        required: true
+        type: string
+      version:
+        description: Baseline version
+        required: true
+        type: string
+      sha256:
+        description: Expected SHA-256 of the reviewed baseline
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch and validate public baseline
+        env:
+          REVISION: ${{ inputs.revision }}
+          VERSION: ${{ inputs.version }}
+          BASELINE_SHA: ${{ inputs.sha256 }}
+        run: |
+          python - <<'PY'
+          import os, re
+          if not re.fullmatch(r'[0-9a-f]{40}', os.environ['REVISION']):
+              raise SystemExit('Expected a full commit SHA')
+          if not re.fullmatch(r'(?:0|[1-9]\d*)(?:\.(?:0|[1-9]\d*)){2}', os.environ['VERSION']):
+              raise SystemExit('Invalid baseline version')
+          PY
+          url="https://raw.githubusercontent.com/theGeekist/garmin-mcp-distribution/${REVISION}/baselines/garmin-mcp-${VERSION}-public-baseline.zip"
+          curl --fail --location --silent --show-error --proto '=https' --proto-redir '=https' --max-filesize 1048576 "$url" -o "$RUNNER_TEMP/baseline.zip"
+          python scripts/sync_public_baseline.py --baseline "$RUNNER_TEMP/baseline.zip" --sha256 "$BASELINE_SHA"
+      - run: python -m pip install -r requirements-validation.txt
+      - run: python -m unittest discover -s tests -v
+      - run: python scripts/distribution.py build --official-schemas --output-dir "$RUNNER_TEMP/packages"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: reviewed-public-distribution
+          path: ${{ runner.temp }}/packages/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: reviewed-public-inputs
+          path: |
+            catalogue/garmin.json
+            skills/garmin-review/
+            providers/gemini/GEMINI.md
+            upstream/
+            README.md
+            docs/clients/README.md
+          if-no-files-found: error

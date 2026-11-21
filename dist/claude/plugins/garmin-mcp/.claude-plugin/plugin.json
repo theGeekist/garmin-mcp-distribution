@@ -1,7 +1,7 @@
 {
   "name": "garmin-mcp",
-  "version": "0.3.6",
-  "description": "Review your Garmin activities, running trends, health metrics and saved workouts with your AI assistant. Plan a workout or make a supported change with your confirmation. A connected Garmin account and compatible host are required. Geekist independently operates this integration.",
+  "version": "0.3.12",
+  "description": "Explore your Garmin activities, running progress, daily health metrics and saved workouts with an AI assistant. Compare trends, preview structured training sessions, and make supported changes with your confirmation. Garmin by geekist.co is independently developed and operated by Geekist and is not affiliated with or endorsed by Garmin.",
   "author": {
     "name": "Geekist",
     "url": "https://geekist.co"
