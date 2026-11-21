@@ -13,17 +13,11 @@ Choose the smallest appropriate set of tools for the user's question. Use tool d
 | Daily or historical wellness | Use `garmin_get_wellness_summary` for a native daily wellness response and `garmin_get_wellness_history` for its historical equivalent; do not assume these are identical to convenience summaries. |
 | Weight | Use `garmin_get_weight_history` for progression, `garmin_get_weight_measurements` for individual readings and `garmin_get_weight_goals` when goals matter. |
 | Heart-rate training zones or fitness age | Use `garmin_get_heart_rate_zones` or `garmin_get_fitness_age`, respectively, if the question requires Garmin's configured zones or estimate. |
-| Cycle tracking | Use `garmin_get_cycle_summary` for an overview and `garmin_get_cycle_day` for a selected day's entries or Garmin analysis. See [Cycle tracking](#cycle-tracking). |
 | Saved workouts | Use `garmin_list_workouts` to find saved sessions and `garmin_get_workout` to inspect one. For the workout linked to a completed activity, use `garmin_get_activity_workouts`. |
 | Other documented data | Use `garmin_data_catalog` to discover available endpoints and dedicated tools. Prefer the dedicated tool. Use `garmin_read_data` only if it remains exposed and needed for data not supported by the dedicated interface. Do not invent endpoint paths or parameters. |
 | Account and connection | Use `garmin_account_status` for relevant connection capabilities. Use `garmin_get_profile_settings` when units or account preferences matter. If the connection itself is unavailable, direct the user to its host's reconnect flow and Geekist support. |
 
 Align time zones, calendar dates, measurements and units across combined results. Report which period and data support calculations; do not silently treat a partial or missing record as a complete zero. For charts or exports, include the fields necessary for the request and confirm before external sharing.
 
-## Cycle tracking
 
-Read cycle data when requested. Use `calendarDate` in `YYYY-MM-DD` format. For day views, pass the present calendar date in the user's time zone as `todayDate`, including when reading an earlier day. Request `includeAnalysis: true` when the user asks for Garmin's analysis. Use the currently exposed parameter schema.
-
-Separate user-logged entries from Garmin-generated estimates. When the response has no entry for the requested date, state what was returned rather than extrapolating. Do not turn device estimates into clinical conclusions, pregnancy inferences or contraception or fertility advice.
-
-If only a generic endpoint reader exists, obtain the documented endpoint and arguments through `garmin_data_catalog`. Retrieved FIT files may contain GPS and device details; request them only when relevant to the user's intended analysis.
+Retrieved FIT files may contain GPS and device details; request them only when relevant to the user’s intended analysis.

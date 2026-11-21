@@ -27,11 +27,11 @@ Choose a local package if you want the connection and the bundled [Garmin review
 
 | Client | Package |
 | --- | --- |
-| Codex | [Local marketplace ZIP](dist/archives/garmin-mcp-0.3.13-codex-marketplace.zip) |
-| Claude Code | [Local marketplace ZIP](dist/archives/garmin-mcp-0.3.13-claude-code.zip) |
-| Claude | [Standalone plugin ZIP](dist/archives/garmin-mcp-0.3.13-claude-plugin.zip) |
-| Gemini CLI | [Extension ZIP](dist/archives/garmin-mcp-0.3.13-gemini-cli.zip) |
-| OpenAI plugin hosts | [Portable plugin ZIP](dist/archives/garmin-mcp-0.3.13-openai.zip) |
+| Codex | [Local marketplace ZIP](dist/archives/garmin-mcp-0.3.14-codex-marketplace.zip) |
+| Claude Code | [Local marketplace ZIP](dist/archives/garmin-mcp-0.3.14-claude-code.zip) |
+| Claude | [Standalone plugin ZIP](dist/archives/garmin-mcp-0.3.14-claude-plugin.zip) |
+| Gemini CLI | [Extension ZIP](dist/archives/garmin-mcp-0.3.14-gemini-cli.zip) |
+| OpenAI plugin hosts | [Portable plugin ZIP](dist/archives/garmin-mcp-0.3.14-openai.zip) |
 
 This repository contains client packages for Geekist’s hosted service. See the [package licence](LICENSE) and [SHA-256 checksums](dist/archives/SHA256SUMS).
 

@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "garmin-mcp",
-  "version": "0.3.13",
+  "version": "0.3.14",
   "description": "Explore your Garmin activities, running progress, daily health metrics and saved workouts with an AI assistant. Compare trends, preview structured training sessions, and make supported changes with your confirmation. Garmin by geekist.co is independently developed and operated by Geekist and is not affiliated with or endorsed by Garmin.",
   "author": {
     "name": "Geekist",
@@ -31,7 +31,7 @@
         "commerce": false,
         "prompts": [
           "Compare my runs in the last two complete weeks.",
-          "Show my Garmin cycle records for November 9, 2026.",
+          "Show my Garmin daily health summary for November 9, 2026.",
           "Preview a cycling workout with four two-minute intervals; do not save it."
         ],
         "test_cases": {
@@ -49,10 +49,10 @@
               "expected_behavior": "Find the requested run. Use current Garmin Connect activity totals for headline metrics and the returned lap records for lap timing."
             },
             {
-              "description": "Retrieve a requested cycle-tracking day; reviewer account has a known entry or a verified empty date.",
-              "prompt": "Show my Garmin cycle records for November 9, 2026; if there are none, say so.",
-              "tools_triggered": "garmin_get_cycle_day",
-              "expected_behavior": "Read calendarDate 2026-11-09 with todayDate in the user's time zone. Deliver the first-read disclosure if needed, present the returned records and distinguish logged entries from Garmin's estimates. State clearly if no entry is returned."
+              "description": "Retrieve a daily health summary for a known date.",
+              "prompt": "Show my Garmin health summary for November 9, 2026; if none is available, say so.",
+              "tools_triggered": "garmin_get_daily_health",
+              "expected_behavior": "Retrieve the requested date and report returned summary information, or clearly state that no data was returned."
             },
             {
               "description": "Preview a workout without saving it.",
@@ -85,7 +85,7 @@
       },
       "publication": {
         "countries": [],
-        "release_notes": "Automates public package builds, versioned GitHub Release assets, checksums and MCP Registry metadata from the reviewed public baseline."
+        "release_notes": "Removes cycle-record tools and endpoints from public access while retaining internal implementation."
       }
     }
   }

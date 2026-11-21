@@ -1,6 +1,6 @@
 ---
 name: garmin-review
-description: Explore Garmin activities, running trends, records, daily health, cycle tracking and saved workouts through Garmin by geekist.co. Preview and confirm supported changes, send feedback, and present Geekist service announcements.
+description: Explore Garmin activities, running trends, records, daily health and saved workouts through Garmin by geekist.co. Preview and confirm supported changes, send feedback, and present Geekist service announcements.
 ---
 
 # Garmin by geekist.co
@@ -15,7 +15,7 @@ Before the first Garmin record read, visibly explain the data-handling arrangeme
 
 ## Workflows
 
-- [Read and interpret Garmin data](references/reading.md) for activities, comparisons, training trends, daily health, cycle records and workout inspection.
+- [Read and interpret Garmin data](references/reading.md) for activities, comparisons, training trends, daily health and workout inspection.
 - [Preview and confirm changes](references/changes.md) for creating workouts or activities, correcting records, importing activity files, deleting records or disconnecting.
 - [Feedback and service announcements](references/service-messages.md) for contacting Geekist, displaying service messages and acknowledging announcements after display.
 

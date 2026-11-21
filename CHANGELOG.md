@@ -2,6 +2,10 @@
 
 Changes here describe the public client packages. Server changes are available only when deployed to the hosted service.
 
+## 0.3.14
+
+- Removes cycle-record tools and endpoints from public access while retaining internal implementation.
+
 ## 0.3.13
 
 - Automates public package builds, versioned GitHub Release assets, checksums and MCP Registry metadata from the reviewed public baseline.
