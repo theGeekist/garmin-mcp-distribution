@@ -16,7 +16,7 @@ Custom connections and local package installation depend on your client version,
 
 ## Codex
 
-Download the [Codex marketplace ZIP](../../dist/archives/garmin-mcp-0.3.12-codex-marketplace.zip) and extract it. From the directory containing `.agents/plugins/marketplace.json`, run:
+Download the [Codex marketplace ZIP](../../dist/archives/garmin-mcp-0.3.13-codex-marketplace.zip) and extract it. From the directory containing `.agents/plugins/marketplace.json`, run:
 
 ```sh
 codex plugin marketplace add .
@@ -33,11 +33,11 @@ Complete authentication if prompted. Start a new chat and ask Codex to show your
 
 ## Claude plugin
 
-If your Claude account allows plugin uploads, go to **Customize → Plugins → Add → Upload plugin** and select the [Claude plugin ZIP](../../dist/archives/garmin-mcp-0.3.12-claude-plugin.zip). Open the plugin’s **Connectors** tab and connect Garmin. [Claude plugin upload documentation](https://claude.com/docs/plugins/build#test-your-plugin)
+If your Claude account allows plugin uploads, go to **Customize → Plugins → Add → Upload plugin** and select the [Claude plugin ZIP](../../dist/archives/garmin-mcp-0.3.13-claude-plugin.zip). Open the plugin’s **Connectors** tab and connect Garmin. [Claude plugin upload documentation](https://claude.com/docs/plugins/build#test-your-plugin)
 
 ## Claude Code
 
-Download the [Claude Code marketplace ZIP](../../dist/archives/garmin-mcp-0.3.12-claude-code.zip) and extract it. From the directory containing `.claude-plugin/marketplace.json`, run:
+Download the [Claude Code marketplace ZIP](../../dist/archives/garmin-mcp-0.3.13-claude-code.zip) and extract it. From the directory containing `.claude-plugin/marketplace.json`, run:
 
 ```sh
 claude plugin marketplace add .

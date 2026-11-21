@@ -57,6 +57,6 @@
   },
   "publication": {
     "countries": [],
-    "release_notes": "Refines public Garmin tool discovery and guidance, clarifies independent Geekist attribution, and preserves service announcements and feedback handling."
+    "release_notes": "Automates public package builds, versioned GitHub Release assets, checksums and MCP Registry metadata from the reviewed public baseline."
   }
 }

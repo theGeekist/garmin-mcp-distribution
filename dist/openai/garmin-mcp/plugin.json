@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "garmin-mcp",
-  "version": "0.3.12",
+  "version": "0.3.13",
   "description": "Explore your Garmin activities, running progress, daily health metrics and saved workouts with an AI assistant. Compare trends, preview structured training sessions, and make supported changes with your confirmation. Garmin by geekist.co is independently developed and operated by Geekist and is not affiliated with or endorsed by Garmin.",
   "author": {
     "name": "Geekist",
@@ -85,7 +85,7 @@
       },
       "publication": {
         "countries": [],
-        "release_notes": "Refines public Garmin tool discovery and guidance, clarifies independent Geekist attribution, and preserves service announcements and feedback handling."
+        "release_notes": "Automates public package builds, versioned GitHub Release assets, checksums and MCP Registry metadata from the reviewed public baseline."
       }
     }
   }

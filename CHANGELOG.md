@@ -2,6 +2,10 @@
 
 Changes here describe the public client packages. Server changes are available only when deployed to the hosted service.
 
+## 0.3.13
+
+- Automates public package builds, versioned GitHub Release assets, checksums and MCP Registry metadata from the reviewed public baseline.
+
 ## 0.3.12
 
 - Refresh the Garmin review skill with clearer guidance for activities, health data, workouts and confirmed changes.
